@@ -18,7 +18,6 @@ export default () => {
   
   const data = useRecoilValue(atomLinkList);
 
-  console.log(typeof data);
   function onPressAdd() {
     navigation.navigate("AddLink");
   }
