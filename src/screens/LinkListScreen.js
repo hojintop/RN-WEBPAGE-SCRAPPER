@@ -1,4 +1,4 @@
-import { FlatList, useWindowDimensions, View } from "react-native";
+import { FlatList, SectionList, useWindowDimensions, View } from "react-native";
 import Header from "../components/Header/Header";
 import HeaderTitle from "../components/Header/HeaderTitle";
 import HeaderGroup from "../components/Header/HeaderGroup";
@@ -10,6 +10,7 @@ import Icons from "../components/Icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRecoilValue } from "recoil";
 import { atomLinkList } from "../states/atomLinkList";
+import { useEffect, useState } from "react";
 
 
 export default () => {
@@ -17,6 +18,23 @@ export default () => {
   const insets = useSafeAreaInsets();
   
   const data = useRecoilValue(atomLinkList);
+
+  // sections 상태를 useState로 관리
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    // getSections 함수를 호출하여 sections 업데이트
+    const getSections = (data) => {
+      const sectionData = data.list.map(item => ({
+        date: new Date(item.createdAt).toLocaleDateString(),
+        data: [item],  // SectionList는 'data'가 배열이어야 하므로 배열로 감싸줍니다.
+      }));
+      setSections(sectionData);
+    };
+
+    // data가 변경될 때마다 sections를 업데이트
+    getSections(data);
+  }, [data.list]);
 
   function onPressAdd() {
     navigation.navigate("AddLink");
@@ -31,7 +49,7 @@ export default () => {
         <Button onPress={()=>onPressDetail(item)} paddingHorizontal={24} paddingVertical={13}>
             <Typography fontSize={20} color="black">{item.link}</Typography>
             <Spacer space={4}></Spacer>
-            <Typography fontSize={20} color="black">
+            <Typography fontSize={20} color="gray">
                 {item.title !== "" ? `${item.title.slice(0,20)} | ` : ""} {new Date(item.createdAt).toLocaleString()}
             </Typography>
         </Button>
@@ -39,6 +57,15 @@ export default () => {
     )
   }
   
+  function renderSectionHeader({section}){
+    return(
+
+        <View style={{backgroundColor: "lightgray"}}>
+            <Typography fontSize={15}>{section.date}</Typography>
+        </View>
+    )
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <Header>
@@ -47,11 +74,20 @@ export default () => {
         </HeaderGroup>
       </Header>
 
-      <FlatList
+      <SectionList 
+        style={{flex: 1, }}
+        sections={sections}
+        renderItem={renderItem}
+        renderSectionHeader={renderSectionHeader}
+      />
+
+      
+
+      {/* <FlatList
         style={{flex: 1,}}
         data={data.list}
         renderItem={renderItem}
-      />
+      /> */}
       
         <View
           style={{

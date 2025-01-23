@@ -27,7 +27,7 @@ function asyncStorageEffect(key) {
         try {
           const savedValue = await getItem(key); // key에 해당하는 값을 비동기적으로 불러오기
           if (savedValue !== null) {
-            console.log("Loaded from asyncStorage:", savedValue);
+            // console.log("Loaded from asyncStorage:", savedValue);
             setSelf(JSON.parse(savedValue)); // 로컬 저장소에서 값이 있으면, atom에 설정
           }
         } catch (error) {
@@ -38,7 +38,7 @@ function asyncStorageEffect(key) {
       loadFromStorage(); // 비동기 호출
   
       // onSet 함수에서 상태 변경 시, 로컬 저장소와 동기화
-      onSet(function (newValue, oldValue, isReset) {
+      onSet(function (newValue, _, isReset) {
         if (isReset) {
           removeItem(key); // 초기화일 경우 로컬 저장소에서 삭제
         } else {
@@ -48,7 +48,7 @@ function asyncStorageEffect(key) {
     };
   }
 
-  
+
 export const atomLinkList = atom({
     key: "MAIN/LINK_LIST",
     default:{

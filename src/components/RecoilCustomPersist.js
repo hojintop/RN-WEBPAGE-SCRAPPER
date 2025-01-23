@@ -15,7 +15,6 @@ export default(props)=>{
         }
 
         setIsLoaded(true);
-        console.log("persist");
     }
 
     useEffect(()=>{
